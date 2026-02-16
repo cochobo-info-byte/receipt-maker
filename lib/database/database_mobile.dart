@@ -7,6 +7,9 @@ import 'database_models.dart';
 class AppDatabase {
   static const String _receiptsKey = 'receipts';
   static const String _issuersKey = 'issuers';
+  static const String _recipientsKey = 'recipients';
+  static const String _issuerTemplatesKey = 'issuer_templates';
+  static const String _descriptionsKey = 'descriptions';
 
   Future<SharedPreferences> get _prefs async {
     try {
@@ -139,6 +142,15 @@ class AppDatabase {
     return true;
   }
 
+  Future<IssuerProfile?> getIssuerById(int id) async {
+    final issuers = await getAllIssuers();
+    try {
+      return issuers.firstWhere((i) => i.id == id.toString());
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<int> deleteIssuer(String id) async {
     final issuers = await getAllIssuers();
     issuers.removeWhere((i) => i.id == id);
@@ -180,6 +192,141 @@ class AppDatabase {
     final prefs = await _prefs;
     final issuersJson = issuers.map((i) => jsonEncode(i.toJson())).toList();
     await prefs.setStringList(_issuersKey, issuersJson);
+  }
+
+  // Recipient template operations
+  Future<List<RecipientTemplate>> getAllRecipients() async {
+    try {
+      final prefs = await _prefs;
+      final recipientsJson = prefs.getStringList(_recipientsKey) ?? [];
+      return recipientsJson
+          .map((json) => RecipientTemplate.fromJson(jsonDecode(json)))
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    } catch (e) {
+      debugPrint('❌ Error getting recipients: $e');
+      return [];
+    }
+  }
+
+  Future<String> insertRecipient(RecipientTemplate recipient) async {
+    final recipients = await getAllRecipients();
+    recipients.add(recipient);
+    await _saveRecipients(recipients);
+    return recipient.id;
+  }
+
+  Future<bool> updateRecipient(RecipientTemplate recipient) async {
+    final recipients = await getAllRecipients();
+    final index = recipients.indexWhere((r) => r.id == recipient.id);
+    if (index == -1) return false;
+    recipients[index] = recipient;
+    await _saveRecipients(recipients);
+    return true;
+  }
+
+  Future<int> deleteRecipient(String id) async {
+    final recipients = await getAllRecipients();
+    recipients.removeWhere((r) => r.id == id);
+    await _saveRecipients(recipients);
+    return 1;
+  }
+
+  Future<void> _saveRecipients(List<RecipientTemplate> recipients) async {
+    final prefs = await _prefs;
+    final recipientsJson =
+        recipients.map((r) => jsonEncode(r.toJson())).toList();
+    await prefs.setStringList(_recipientsKey, recipientsJson);
+  }
+
+  // Issuer template operations
+  Future<List<IssuerTemplate>> getAllIssuerTemplates() async {
+    try {
+      final prefs = await _prefs;
+      final templatesJson = prefs.getStringList(_issuerTemplatesKey) ?? [];
+      return templatesJson
+          .map((json) => IssuerTemplate.fromJson(jsonDecode(json)))
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    } catch (e) {
+      debugPrint('❌ Error getting issuer templates: $e');
+      return [];
+    }
+  }
+
+  Future<String> insertIssuerTemplate(IssuerTemplate template) async {
+    final templates = await getAllIssuerTemplates();
+    templates.add(template);
+    await _saveIssuerTemplates(templates);
+    return template.id;
+  }
+
+  Future<bool> updateIssuerTemplate(IssuerTemplate template) async {
+    final templates = await getAllIssuerTemplates();
+    final index = templates.indexWhere((t) => t.id == template.id);
+    if (index == -1) return false;
+    templates[index] = template;
+    await _saveIssuerTemplates(templates);
+    return true;
+  }
+
+  Future<int> deleteIssuerTemplate(String id) async {
+    final templates = await getAllIssuerTemplates();
+    templates.removeWhere((t) => t.id == id);
+    await _saveIssuerTemplates(templates);
+    return 1;
+  }
+
+  Future<void> _saveIssuerTemplates(List<IssuerTemplate> templates) async {
+    final prefs = await _prefs;
+    final templatesJson =
+        templates.map((t) => jsonEncode(t.toJson())).toList();
+    await prefs.setStringList(_issuerTemplatesKey, templatesJson);
+  }
+
+  // Description template operations
+  Future<List<DescriptionTemplate>> getAllDescriptions() async {
+    try {
+      final prefs = await _prefs;
+      final descriptionsJson = prefs.getStringList(_descriptionsKey) ?? [];
+      return descriptionsJson
+          .map((json) => DescriptionTemplate.fromJson(jsonDecode(json)))
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    } catch (e) {
+      debugPrint('❌ Error getting descriptions: $e');
+      return [];
+    }
+  }
+
+  Future<String> insertDescription(DescriptionTemplate description) async {
+    final descriptions = await getAllDescriptions();
+    descriptions.add(description);
+    await _saveDescriptions(descriptions);
+    return description.id;
+  }
+
+  Future<bool> updateDescription(DescriptionTemplate description) async {
+    final descriptions = await getAllDescriptions();
+    final index = descriptions.indexWhere((d) => d.id == description.id);
+    if (index == -1) return false;
+    descriptions[index] = description;
+    await _saveDescriptions(descriptions);
+    return true;
+  }
+
+  Future<int> deleteDescription(String id) async {
+    final descriptions = await getAllDescriptions();
+    descriptions.removeWhere((d) => d.id == id);
+    await _saveDescriptions(descriptions);
+    return 1;
+  }
+
+  Future<void> _saveDescriptions(List<DescriptionTemplate> descriptions) async {
+    final prefs = await _prefs;
+    final descriptionsJson =
+        descriptions.map((d) => jsonEncode(d.toJson())).toList();
+    await prefs.setStringList(_descriptionsKey, descriptionsJson);
   }
 
   Future<void> close() async {

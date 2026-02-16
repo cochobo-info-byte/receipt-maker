@@ -152,24 +152,45 @@ class _CloudScreenState extends State<CloudScreen> {
   Future<void> _connectGoogleDrive() async {
     setState(() => _isLoading = true);
     
-    final success = await CloudService.signInToGoogleDrive();
-    
-    if (success) {
-      await _checkCloudStatus();
+    try {
+      final success = await CloudService.signInToGoogleDrive();
+      
+      if (success) {
+        await _checkCloudStatus();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✅ Google Drive に接続しました'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('❌ Google Drive への接続がキャンセルされました'),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Connected to Google Drive')),
+          SnackBar(
+            content: Text('❌ エラー: $e'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
+          ),
         );
       }
-    } else {
+    } finally {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to connect to Google Drive')),
-        );
+        setState(() => _isLoading = false);
       }
     }
-    
-    setState(() => _isLoading = false);
   }
 
   Future<void> _disconnectGoogleDrive() async {

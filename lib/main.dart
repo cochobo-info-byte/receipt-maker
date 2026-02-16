@@ -1,134 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'database/database.dart';
 import 'screens/home_screen.dart';
 import 'screens/cloud_screen.dart';
 import 'screens/settings_screen.dart';
 import 'services/ad_service.dart';
 import 'services/consent_service.dart';
+import 'services/analytics_service.dart';
 
 void main() async {
-  // DEBUG VERSION: Completely disable AdMob/UMP to isolate crash
-  print('🔷 DEBUG: Starting Receipt Maker v1.0.2 (Debug)');
+  WidgetsFlutterBinding.ensureInitialized();
   
+  // Initialize SharedPreferences early (especially for Web)
   try {
-    print('🔷 DEBUG: Initializing Flutter bindings...');
-    WidgetsFlutterBinding.ensureInitialized();
-    print('✅ DEBUG: Flutter bindings initialized');
-    
-    // Initialize SharedPreferences early (especially for Web)
-    try {
-      print('🔷 DEBUG: Initializing SharedPreferences...');
-      await SharedPreferences.getInstance();
-      print('✅ DEBUG: SharedPreferences initialized successfully');
-    } catch (e) {
-      print('⚠️ DEBUG: SharedPreferences warning: $e');
-    }
-    
-    // DISABLED: AdMob initialization completely removed for debugging
-    print('🔷 DEBUG: AdMob initialization DISABLED for testing');
-    
-    print('🔷 DEBUG: Launching app...');
-    runApp(
-      Provider<AppDatabase>(
-        create: (context) {
-          print('🔷 DEBUG: Creating AppDatabase...');
-          return AppDatabase();
-        },
-        dispose: (context, db) {
-          print('🔷 DEBUG: Disposing AppDatabase...');
-          db.close();
-        },
-        child: const MyApp(),
-      ),
-    );
-    print('✅ DEBUG: App launched successfully');
-  } catch (e, stackTrace) {
-    print('❌ DEBUG: FATAL ERROR in main(): $e');
-    print('❌ DEBUG: Stack trace: $stackTrace');
-    
-    // Show detailed error screen
-    runApp(
-      MaterialApp(
-        home: Scaffold(
-          backgroundColor: Colors.white,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(
-                    child: Icon(Icons.bug_report, size: 64, color: Colors.red),
-                  ),
-                  const SizedBox(height: 16),
-                  const Center(
-                    child: Text(
-                      'デバッグモード',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Center(
-                    child: Text(
-                      'アプリの起動中にエラーが発生しました',
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'エラー詳細:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      border: Border.all(color: Colors.red.shade200),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: SelectableText(
-                      e.toString(),
-                      style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'スタックトレース:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: SelectableText(
-                      stackTrace.toString(),
-                      style: const TextStyle(fontSize: 10, fontFamily: 'monospace'),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'このスクリーンショットを開発者に送信してください',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    await SharedPreferences.getInstance();
+    debugPrint('✅ SharedPreferences initialized successfully');
+  } catch (e) {
+    debugPrint('⚠️ SharedPreferences initialization warning: $e');
   }
+  
+  // Initialize Firebase (モバイルのみ)
+  if (!kIsWeb) {
+    try {
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase initialized successfully');
+      
+      // Initialize Firebase Analytics
+      await AnalyticsService.initialize();
+      
+      // Log app open
+      await AnalyticsService.logAppOpen();
+    } catch (e) {
+      debugPrint('⚠️ Firebase initialization warning: $e');
+    }
+  }
+  
+  // Initialize AdMob (モバイルのみ)
+  if (!kIsWeb) {
+    try {
+      await ConsentService.initialize();
+      await AdService.initialize();
+      await AdService.loadInterstitialAd();
+      debugPrint('✅ AdMob initialized successfully');
+    } catch (e) {
+      debugPrint('⚠️ AdMob initialization warning: $e');
+    }
+  } else {
+    debugPrint('ℹ️ Firebase & AdMob disabled on Web platform');
+  }
+  
+  runApp(
+    Provider<AppDatabase>(
+      create: (context) => AppDatabase(),
+      dispose: (context, db) => db.close(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -139,6 +69,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Receipt Maker',
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [
+        if (AnalyticsService.observer != null) AnalyticsService.observer!,
+      ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.grey,

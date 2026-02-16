@@ -50,7 +50,7 @@ class IssuerProfilesScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Add a profile to include company info',
+                    '会社情報を含めるためにプロファイルを追加',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade400,
@@ -102,25 +102,25 @@ class IssuerProfilesScreen extends StatelessWidget {
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Company Name *'),
+                decoration: const InputDecoration(labelText: '会社名 *'),
               ),
               TextField(
                 controller: addressController,
-                decoration: const InputDecoration(labelText: 'Address *'),
+                decoration: const InputDecoration(labelText: '住所 *'),
                 maxLines: 2,
               ),
               TextField(
                 controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
+                decoration: const InputDecoration(labelText: '電話番号'),
               ),
               TextField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'メールアドレス'),
               ),
               TextField(
                 controller: regNumberController,
                 decoration:
-                    const InputDecoration(labelText: 'Registration Number'),
+                    const InputDecoration(labelText: '登録番号 (T+13桁)'),
               ),
             ],
           ),
@@ -128,14 +128,14 @@ class IssuerProfilesScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('キャンセル'),
           ),
           TextButton(
             onPressed: () async {
               if (nameController.text.isEmpty ||
                   addressController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please fill required fields')),
+                  const SnackBar(content: Text('必須項目を入力してください')),
                 );
                 return;
               }
@@ -166,7 +166,7 @@ class IssuerProfilesScreen extends StatelessWidget {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Save'),
+            child: const Text('保存'),
           ),
         ],
       ),
@@ -256,7 +256,7 @@ class _IssuerCard extends StatelessWidget {
                   onPressed: () async {
                     await database.deleteIssuer(issuer.id);
                   },
-                  child: const Text('Delete'),
+                  child: const Text('削除'),
                 ),
               ],
             ),

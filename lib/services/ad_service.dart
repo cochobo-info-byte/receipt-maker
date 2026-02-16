@@ -1,4 +1,5 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'subscription_service.dart';
 
 class AdService {
@@ -6,9 +7,20 @@ class AdService {
   static InterstitialAd? _interstitialAd;
   static bool _isInitialized = false;
 
-  // Production Ad Unit IDs
-  static const String _bannerAdUnitId = 'ca-app-pub-5706787649643234/5463886415'; // Production Banner ID
-  static const String _interstitialAdUnitId = 'ca-app-pub-5706787649643234/9842115124'; // Production Interstitial ID
+  // Production Ad Unit IDs（本番環境用）
+  static const String _productionBannerAdUnitId = 'ca-app-pub-5706787649643234/5463886415';
+  static const String _productionInterstitialAdUnitId = 'ca-app-pub-5706787649643234/9842115124';
+
+  // Test Ad Unit IDs（テスト環境用 - Googleの公式テストID）
+  static const String _testBannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111';
+  static const String _testInterstitialAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
+
+  // 環境に応じて広告IDを切り替え
+  static String get _bannerAdUnitId => 
+      kDebugMode ? _testBannerAdUnitId : _productionBannerAdUnitId;
+  
+  static String get _interstitialAdUnitId => 
+      kDebugMode ? _testInterstitialAdUnitId : _productionInterstitialAdUnitId;
 
   // Initialize Mobile Ads SDK
   static Future<void> initialize() async {
@@ -16,6 +28,12 @@ class AdService {
     
     await MobileAds.instance.initialize();
     _isInitialized = true;
+    
+    if (kDebugMode) {
+      debugPrint('🧪 AdMob initialized with TEST ads');
+    } else {
+      debugPrint('✅ AdMob initialized with PRODUCTION ads');
+    }
   }
 
   // Create and load banner ad

@@ -7,6 +7,9 @@ import 'database_models.dart';
 class AppDatabaseWeb {
   static const String _receiptsKey = 'receipts';
   static const String _issuersKey = 'issuers';
+  static const String _recipientsKey = 'recipients';
+  static const String _issuerTemplatesKey = 'issuer_templates';
+  static const String _descriptionsKey = 'descriptions';
 
   final html.Storage _localStorage = html.window.localStorage;
 
@@ -180,6 +183,15 @@ class AppDatabaseWeb {
     }
   }
 
+  Future<IssuerProfile?> getIssuerById(int id) async {
+    final issuers = await getAllIssuers();
+    try {
+      return issuers.firstWhere((i) => i.id == id.toString());
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> deleteIssuer(String id) async {
     final issuers = await getAllIssuers();
     issuers.removeWhere((i) => i.id == id);
@@ -218,6 +230,120 @@ class AppDatabaseWeb {
       }
       await _saveIssuers(issuers);
     }
+  }
+
+  // Recipient template operations
+  Future<List<RecipientTemplate>> getAllRecipients() async {
+    final recipientsJson = _localStorage[_recipientsKey];
+    if (recipientsJson == null || recipientsJson.isEmpty) return [];
+    
+    final List<dynamic> list = jsonDecode(recipientsJson);
+    return list
+        .map((json) => RecipientTemplate.fromJson(json))
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  Future<void> insertRecipient(RecipientTemplate recipient) async {
+    final recipients = await getAllRecipients();
+    recipients.insert(0, recipient);
+    await _saveRecipients(recipients);
+  }
+
+  Future<void> updateRecipient(RecipientTemplate recipient) async {
+    final recipients = await getAllRecipients();
+    final index = recipients.indexWhere((r) => r.id == recipient.id);
+    if (index != -1) {
+      recipients[index] = recipient;
+      await _saveRecipients(recipients);
+    }
+  }
+
+  Future<void> deleteRecipient(String id) async {
+    final recipients = await getAllRecipients();
+    recipients.removeWhere((r) => r.id == id);
+    await _saveRecipients(recipients);
+  }
+
+  Future<void> _saveRecipients(List<RecipientTemplate> recipients) async {
+    final jsonList = recipients.map((r) => r.toJson()).toList();
+    _localStorage[_recipientsKey] = jsonEncode(jsonList);
+  }
+
+  // Issuer template operations
+  Future<List<IssuerTemplate>> getAllIssuerTemplates() async {
+    final templatesJson = _localStorage[_issuerTemplatesKey];
+    if (templatesJson == null || templatesJson.isEmpty) return [];
+    
+    final List<dynamic> list = jsonDecode(templatesJson);
+    return list
+        .map((json) => IssuerTemplate.fromJson(json))
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  Future<void> insertIssuerTemplate(IssuerTemplate template) async {
+    final templates = await getAllIssuerTemplates();
+    templates.insert(0, template);
+    await _saveIssuerTemplates(templates);
+  }
+
+  Future<void> updateIssuerTemplate(IssuerTemplate template) async {
+    final templates = await getAllIssuerTemplates();
+    final index = templates.indexWhere((t) => t.id == template.id);
+    if (index != -1) {
+      templates[index] = template;
+      await _saveIssuerTemplates(templates);
+    }
+  }
+
+  Future<void> deleteIssuerTemplate(String id) async {
+    final templates = await getAllIssuerTemplates();
+    templates.removeWhere((t) => t.id == id);
+    await _saveIssuerTemplates(templates);
+  }
+
+  Future<void> _saveIssuerTemplates(List<IssuerTemplate> templates) async {
+    final jsonList = templates.map((t) => t.toJson()).toList();
+    _localStorage[_issuerTemplatesKey] = jsonEncode(jsonList);
+  }
+
+  // Description template operations
+  Future<List<DescriptionTemplate>> getAllDescriptions() async {
+    final descriptionsJson = _localStorage[_descriptionsKey];
+    if (descriptionsJson == null || descriptionsJson.isEmpty) return [];
+    
+    final List<dynamic> list = jsonDecode(descriptionsJson);
+    return list
+        .map((json) => DescriptionTemplate.fromJson(json))
+        .toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  Future<void> insertDescription(DescriptionTemplate description) async {
+    final descriptions = await getAllDescriptions();
+    descriptions.insert(0, description);
+    await _saveDescriptions(descriptions);
+  }
+
+  Future<void> updateDescription(DescriptionTemplate description) async {
+    final descriptions = await getAllDescriptions();
+    final index = descriptions.indexWhere((d) => d.id == description.id);
+    if (index != -1) {
+      descriptions[index] = description;
+      await _saveDescriptions(descriptions);
+    }
+  }
+
+  Future<void> deleteDescription(String id) async {
+    final descriptions = await getAllDescriptions();
+    descriptions.removeWhere((d) => d.id == id);
+    await _saveDescriptions(descriptions);
+  }
+
+  Future<void> _saveDescriptions(List<DescriptionTemplate> descriptions) async {
+    final jsonList = descriptions.map((d) => d.toJson()).toList();
+    _localStorage[_descriptionsKey] = jsonEncode(jsonList);
   }
 
   Future<void> close() async {

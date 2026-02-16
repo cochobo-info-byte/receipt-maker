@@ -1,5 +1,36 @@
 // Data models for Receipt Maker app
 
+// Tax item model for invoice compliance
+class TaxItem {
+  final String description;  // 品目
+  final double amount;        // 金額（税込み）
+  final double taxRate;       // 税率（0.08 or 0.10）
+
+  TaxItem({
+    required this.description,
+    required this.amount,
+    required this.taxRate,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'description': description,
+        'amount': amount,
+        'taxRate': taxRate,
+      };
+
+  factory TaxItem.fromJson(Map<String, dynamic> json) => TaxItem(
+        description: json['description'],
+        amount: json['amount'].toDouble(),
+        taxRate: json['taxRate'].toDouble(),
+      );
+
+  // 税抜き金額を計算
+  double get subtotal => amount / (1 + taxRate);
+
+  // 消費税額を計算
+  double get taxAmount => amount - subtotal;
+}
+
 // Receipt model
 class Receipt {
   final String id;
@@ -15,6 +46,9 @@ class Receipt {
   final String? cloudFileId;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final double taxRate; // 消費税率（0.10 = 10%）
+  final bool includeTax; // 税込み価格かどうか
+  final List<TaxItem>? taxItems; // 税率別明細（インボイス対応）
 
   Receipt({
     required this.id,
@@ -30,6 +64,9 @@ class Receipt {
     this.cloudFileId,
     required this.createdAt,
     required this.updatedAt,
+    this.taxRate = 0.10, // デフォルト10%
+    this.includeTax = true, // デフォルト税込み
+    this.taxItems, // 税率別明細（オプション）
   });
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +83,9 @@ class Receipt {
         'cloudFileId': cloudFileId,
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt.toIso8601String(),
+        'taxRate': taxRate,
+        'includeTax': includeTax,
+        'taxItems': taxItems?.map((item) => item.toJson()).toList(),
       };
 
   factory Receipt.fromJson(Map<String, dynamic> json) => Receipt(
@@ -62,6 +102,11 @@ class Receipt {
         cloudFileId: json['cloudFileId'],
         createdAt: DateTime.parse(json['createdAt']),
         updatedAt: DateTime.parse(json['updatedAt']),
+        taxRate: json['taxRate']?.toDouble() ?? 0.10,
+        includeTax: json['includeTax'] ?? true,
+        taxItems: json['taxItems'] != null 
+            ? (json['taxItems'] as List).map((item) => TaxItem.fromJson(item)).toList()
+            : null,
       );
 
   Receipt copyWith({
@@ -78,6 +123,9 @@ class Receipt {
     String? cloudFileId,
     DateTime? createdAt,
     DateTime? updatedAt,
+    double? taxRate,
+    bool? includeTax,
+    List<TaxItem>? taxItems,
   }) {
     return Receipt(
       id: id ?? this.id,
@@ -93,6 +141,9 @@ class Receipt {
       cloudFileId: cloudFileId ?? this.cloudFileId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      taxRate: taxRate ?? this.taxRate,
+      includeTax: includeTax ?? this.includeTax,
+      taxItems: taxItems ?? this.taxItems,
     );
   }
 }
@@ -138,6 +189,87 @@ class IssuerProfile {
         email: json['email'],
         registrationNumber: json['registrationNumber'],
         isDefault: json['isDefault'] ?? false,
+        createdAt: DateTime.parse(json['createdAt']),
+      );
+}
+
+// Recipient (宛名) model
+class RecipientTemplate {
+  final String id;
+  final String name;
+  final String? address;
+  final DateTime createdAt;
+
+  RecipientTemplate({
+    required this.id,
+    required this.name,
+    this.address,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'address': address,
+        'createdAt': createdAt.toIso8601String(),
+      };
+
+  factory RecipientTemplate.fromJson(Map<String, dynamic> json) =>
+      RecipientTemplate(
+        id: json['id'],
+        name: json['name'],
+        address: json['address'],
+        createdAt: DateTime.parse(json['createdAt']),
+      );
+}
+
+// Issuer (発行者) template model
+class IssuerTemplate {
+  final String id;
+  final String name;
+  final DateTime createdAt;
+
+  IssuerTemplate({
+    required this.id,
+    required this.name,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'createdAt': createdAt.toIso8601String(),
+      };
+
+  factory IssuerTemplate.fromJson(Map<String, dynamic> json) => IssuerTemplate(
+        id: json['id'],
+        name: json['name'],
+        createdAt: DateTime.parse(json['createdAt']),
+      );
+}
+
+// Description (但書き) template model
+class DescriptionTemplate {
+  final String id;
+  final String text;
+  final DateTime createdAt;
+
+  DescriptionTemplate({
+    required this.id,
+    required this.text,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'text': text,
+        'createdAt': createdAt.toIso8601String(),
+      };
+
+  factory DescriptionTemplate.fromJson(Map<String, dynamic> json) =>
+      DescriptionTemplate(
+        id: json['id'],
+        text: json['text'],
         createdAt: DateTime.parse(json['createdAt']),
       );
 }

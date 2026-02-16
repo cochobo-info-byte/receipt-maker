@@ -1,10 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../database/database.dart';
+import '../services/ad_service.dart';
 
-class StatisticsScreen extends StatelessWidget {
+class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
+
+  @override
+  State<StatisticsScreen> createState() => _StatisticsScreenState();
+}
+
+class _StatisticsScreenState extends State<StatisticsScreen> {
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  Future<void> _loadBannerAd() async {
+    final bannerAd = await AdService.createBannerAd();
+    if (bannerAd != null && mounted) {
+      setState(() {
+        _bannerAd = bannerAd;
+        _isBannerAdLoaded = true;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,21 +122,21 @@ class StatisticsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               _StatCard(
-                title: 'Total Receipts',
+                title: '総領収書数',
                 value: receipts.length.toString(),
                 icon: Icons.receipt_outlined,
                 color: Colors.blue,
               ),
               const SizedBox(height: 12),
               _StatCard(
-                title: 'Total Amount',
+                title: '総金額',
                 value: '¥${NumberFormat('#,###').format(totalAmount)}',
                 icon: Icons.payments_outlined,
                 color: Colors.green,
               ),
               const SizedBox(height: 12),
               _StatCard(
-                title: 'Average Amount',
+                title: '平均金額',
                 value: '¥${NumberFormat('#,###').format(averageAmount)}',
                 icon: Icons.trending_up,
                 color: Colors.orange,
@@ -113,7 +145,7 @@ class StatisticsScreen extends StatelessWidget {
               _StatCard(
                 title: '今月',
                 value: '¥${NumberFormat('#,###').format(thisMonthTotal)}',
-                subtitle: '${thisMonthReceipts.length} receipts',
+                subtitle: '${thisMonthReceipts.length} 件',
                 icon: Icons.calendar_today,
                 color: Colors.purple,
               ),
@@ -141,6 +173,12 @@ class StatisticsScreen extends StatelessWidget {
           );
         },
       ),
+      bottomNavigationBar: _isBannerAdLoaded && _bannerAd != null
+          ? SizedBox(
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
+            )
+          : null,
     );
   }
 }

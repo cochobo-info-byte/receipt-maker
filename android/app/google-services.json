@@ -12,7 +12,20 @@
           "package_name": "com.receiptmaker.receipt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "379783727325-of82q44kqnc91926u7ll3d7ujdeu9235.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.receiptmaker.receipt",
+            "certificate_hash": "3a493f8eb0f3e7d6c3a400d851f8e8456f11fc0c"
+          }
+        },
+        {
+          "client_id": "379783727325-0idrpv3lqd6skjdodprc1tc65hqv2kqg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCk7LEM5hN7yL8G3h9CvjbucF4kS8x-fT4"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379783727325-0idrpv3lqd6skjdodprc1tc65hqv2kqg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

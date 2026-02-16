@@ -16,7 +16,22 @@ class AppDatabase {
   Future<IssuerProfile?> getDefaultIssuer() async => throw UnimplementedError();
   Future<void> insertIssuer(IssuerProfile issuer) async => throw UnimplementedError();
   Future<void> updateIssuer(IssuerProfile issuer) async => throw UnimplementedError();
+  Future<IssuerProfile?> getIssuerById(int id) async => throw UnimplementedError();
   Future<void> deleteIssuer(String id) async => throw UnimplementedError();
+  Stream<List<IssuerProfile>> watchAllIssuers() => throw UnimplementedError();
+  Future<void> setDefaultIssuer(String id) async => throw UnimplementedError();
+  Future<List<RecipientTemplate>> getAllRecipients() async => throw UnimplementedError();
+  Future<void> insertRecipient(RecipientTemplate recipient) async => throw UnimplementedError();
+  Future<void> updateRecipient(RecipientTemplate recipient) async => throw UnimplementedError();
+  Future<void> deleteRecipient(String id) async => throw UnimplementedError();
+  Future<List<IssuerTemplate>> getAllIssuerTemplates() async => throw UnimplementedError();
+  Future<void> insertIssuerTemplate(IssuerTemplate template) async => throw UnimplementedError();
+  Future<void> updateIssuerTemplate(IssuerTemplate template) async => throw UnimplementedError();
+  Future<void> deleteIssuerTemplate(String id) async => throw UnimplementedError();
+  Future<List<DescriptionTemplate>> getAllDescriptions() async => throw UnimplementedError();
+  Future<void> insertDescription(DescriptionTemplate description) async => throw UnimplementedError();
+  Future<void> updateDescription(DescriptionTemplate description) async => throw UnimplementedError();
+  Future<void> deleteDescription(String id) async => throw UnimplementedError();
   Future<void> close() async {}
 }
 

@@ -2,6 +2,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'onedrive_service.dart';
 
 class CloudService {
@@ -17,9 +18,28 @@ class CloudService {
   // Google Drive Authentication
   static Future<bool> signInToGoogleDrive() async {
     try {
+      // Sign out first to force fresh authentication
+      await _googleSignIn.signOut();
+      
       final account = await _googleSignIn.signIn();
-      return account != null;
-    } catch (e) {
+      
+      if (account == null) {
+        if (kDebugMode) {
+          debugPrint('❌ Google Sign-In: User cancelled');
+        }
+        return false;
+      }
+      
+      if (kDebugMode) {
+        debugPrint('✅ Google Sign-In successful: ${account.email}');
+      }
+      
+      return true;
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        debugPrint('❌ Google Sign-In error: $e');
+        debugPrint('Stack trace: $stackTrace');
+      }
       return false;
     }
   }

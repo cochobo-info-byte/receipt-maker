@@ -80,7 +80,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Premium Member',
+                  'プレミアム会員',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -89,7 +89,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Subscribed: ${_subscriptionDate != null ? DateFormat('yyyy/MM/dd').format(_subscriptionDate!) : 'Unknown'}',
+                  '登録日: ${_subscriptionDate != null ? DateFormat('yyyy/MM/dd').format(_subscriptionDate!) : '不明'}',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white70,
@@ -100,7 +100,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           const SizedBox(height: 24),
           const Text(
-            'Premium Features',
+            'プレミアム機能',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -109,26 +109,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 12),
           _FeatureCard(
             icon: Icons.block,
-            title: 'No Ads',
-            description: 'Enjoy ad-free experience',
+            title: '広告なし',
+            description: '広告なしで快適に使用',
             isActive: true,
           ),
           _FeatureCard(
             icon: Icons.cloud_sync,
-            title: 'Unlimited Cloud Sync',
-            description: 'Sync receipts to Google Drive & OneDrive',
+            title: '無制限クラウド同期',
+            description: 'Google DriveやOneDriveに同期',
             isActive: true,
           ),
           _FeatureCard(
             icon: Icons.support_agent,
-            title: 'Priority Support',
-            description: 'Get help faster from our team',
+            title: '優先サポート',
+            description: 'より迅速なサポートを受けられます',
             isActive: true,
           ),
           _FeatureCard(
             icon: Icons.file_download,
-            title: 'Advanced Export',
-            description: 'Export in multiple formats',
+            title: '高度なエクスポート',
+            description: '複数形式でエクスポート可能',
             isActive: true,
           ),
           const SizedBox(height: 24),
@@ -139,17 +139,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 builder: (context) => AlertDialog(
                   title: const Text('サブスクリプションをキャンセル'),
                   content: const Text(
-                    'Are you sure you want to cancel your premium subscription? '
-                    'You will lose access to all premium features.',
+                    'プレミアムサブスクリプションをキャンセルしますか？ '
+                    'すべてのプレミアム機能へのアクセスが失われます。',
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Keep Premium'),
+                      child: const Text('プレミアムを維持'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Cancel'),
+                      child: const Text('キャンセル'),
                     ),
                   ],
                 ),
@@ -164,7 +164,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Subscription cancelled'),
+                      content: Text('サブスクリプションをキャンセルしました'),
                     ),
                   );
                 }
@@ -188,7 +188,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Upgrade to Premium',
+          'プレミアムにアップグレード',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w400,
@@ -214,7 +214,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Premium',
+                  'プレミアム',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -223,7 +223,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  '¥150 / month',
+                  '¥150 / 月',
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.w300,
@@ -232,7 +232,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Unlock all premium features',
+                  'すべてのプレミアム機能を解除',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey.shade300,
@@ -243,7 +243,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           const SizedBox(height: 24),
           const Text(
-            'Premium Benefits',
+            'プレミアム特典',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -252,32 +252,32 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 12),
           _FeatureCard(
             icon: Icons.block,
-            title: 'Ad-Free Experience',
-            description: 'Remove all advertisements',
+            title: '広告なしの体験',
+            description: 'すべての広告を削除',
             isActive: false,
           ),
           _FeatureCard(
             icon: Icons.cloud_sync,
-            title: 'Unlimited Cloud Sync',
-            description: 'Automatic backup to Google Drive & OneDrive',
+            title: '無制限クラウド同期',
+            description: 'Google DriveとOneDriveに自動バックアップ',
             isActive: false,
           ),
           _FeatureCard(
             icon: Icons.support_agent,
-            title: 'Priority Support',
-            description: '24/7 dedicated customer support',
+            title: '優先サポート',
+            description: '24/7専用顧客サポート',
             isActive: false,
           ),
           _FeatureCard(
             icon: Icons.file_download,
-            title: 'Advanced Export',
-            description: 'Export receipts in CSV, JSON, and Excel',
+            title: '高度なエクスポート',
+            description: 'CSV、JSON、Excel形式でエクスポート',
             isActive: false,
           ),
           _FeatureCard(
             icon: Icons.dashboard_customize,
-            title: 'Custom Templates',
-            description: 'Create personalized receipt templates',
+            title: 'カスタムテンプレート',
+            description: 'パーソナライズされた領収書テンプレートを作成',
             isActive: false,
           ),
           const SizedBox(height: 24),
@@ -291,7 +291,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Welcome to Premium! 🎉'),
+                    content: Text('プレミアムへようこそ！ 🎉'),
                     backgroundColor: Colors.green,
                   ),
                 );
@@ -307,11 +307,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            child: const Text('Subscribe Now'),
+            child: const Text('今すぐ登録'),
           ),
           const SizedBox(height: 12),
           Text(
-            'Cancel anytime. No commitment required.',
+            'いつでもキャンセル可能。縛りなし。',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
