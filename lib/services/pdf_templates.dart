@@ -1,4 +1,3 @@
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../database/database_models.dart';
 
@@ -133,7 +132,7 @@ class PdfTemplates {
           if (taxItems != null && taxItems.isNotEmpty) ...[
             pw.Text('内訳', style: pw.TextStyle(font: font, fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 10),
-            pw.Table.fromTextArray(
+            pw.TableHelper.fromTextArray(
               context: null,
               data: [
                 ['項目', '金額', '税率'],

@@ -40,8 +40,6 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
   
   late DateTime _issueDate;
   late String _paymentMethod;
-  late double _taxRate;
-  late bool _includeTax;
   
   List<RecipientTemplate> _recipients = [];
   List<DescriptionTemplate> _descriptions = [];
@@ -104,8 +102,6 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
     
     _issueDate = widget.receipt?.issueDate ?? DateTime.now();
     _paymentMethod = widget.receipt?.paymentMethod ?? '現金';
-    _taxRate = widget.receipt?.taxRate ?? 0.10;
-    _includeTax = widget.receipt?.includeTax ?? true;
     
     _loadTemplates();
     _loadDefaultIssuer();
@@ -1119,28 +1115,5 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
 }
 
 // 税率別入力アイテムのヘルパークラス
-class _TaxItemInput {
-  final TextEditingController descriptionController;
-  final TextEditingController amountController;
-  double taxRate;
-  
-  _TaxItemInput({
-    required this.descriptionController,
-    required this.amountController,
-    this.taxRate = 0.10,
-  });
-  
-  void dispose() {
-    descriptionController.dispose();
-    amountController.dispose();
-  }
-  
-  TaxItem toTaxItem() {
-    return TaxItem(
-      description: descriptionController.text,
-      amount: double.tryParse(amountController.text) ?? 0,
-      taxRate: taxRate,
-    );
-  }
-}
+
 
