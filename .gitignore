@@ -24,3 +24,14 @@ Thumbs.db
 
 # Keep lib/ directory for source code!
 
+# Security: Sensitive configuration files (NEVER commit these!)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+android/key.properties
+android/app/release-key.jks
+android/app/*.jks
+*.keystore
+
+# Firebase configuration (use environment-specific configs instead)
+lib/firebase_options.dart
+
