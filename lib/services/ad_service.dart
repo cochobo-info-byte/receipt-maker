@@ -9,7 +9,7 @@ class AdService {
 
   // Production Ad Unit IDs（本番環境用）
   static const String _productionBannerAdUnitId = 'ca-app-pub-5706787649643234/5463886415';
-  static const String _productionInterstitialAdUnitId = 'ca-app-pub-5706787649643234/9842115124';
+  static const String _productionInterstitialAdUnitId = 'ca-app-pub-5706787649643234~8692577186';
 
   // Test Ad Unit IDs（テスト環境用 - Googleの公式テストID）
   static const String _testBannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111';

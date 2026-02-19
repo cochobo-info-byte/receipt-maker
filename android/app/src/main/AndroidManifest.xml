@@ -22,7 +22,7 @@
         <!-- AdMob App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5706787649643234~1234567890"/>
+            android:value="ca-app-pub-5706787649643234~8692577186"/>
         
         <!-- AdServices config override -->
         <property

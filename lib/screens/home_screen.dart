@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../database/database.dart';
 import '../services/share_service.dart';
 import '../services/pdf_service.dart';
-import '../services/ad_service.dart';
 import '../services/analytics_service.dart';
+import '../widgets/banner_ad_widget.dart';
 import 'receipt_form_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,30 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _showAdvancedFilters = false;
   bool _isSelectionMode = false;
   final Set<String> _selectedReceiptIds = {};
-  BannerAd? _bannerAd;
-  bool _isBannerAdLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadBannerAd();
-  }
-
-  Future<void> _loadBannerAd() async {
-    final bannerAd = await AdService.createBannerAd();
-    if (bannerAd != null && mounted) {
-      setState(() {
-        _bannerAd = bannerAd;
-        _isBannerAdLoaded = true;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _bannerAd?.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -793,12 +768,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: _isBannerAdLoaded && _bannerAd != null
-          ? SizedBox(
-              height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            )
-          : null,
+      bottomNavigationBar: const BannerAdContainer(),
     );
   }
 
