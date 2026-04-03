@@ -10,6 +10,7 @@ import 'screens/settings_screen.dart';
 import 'services/ad_service.dart';
 import 'services/consent_service.dart';
 import 'services/analytics_service.dart';
+import 'services/subscription_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,14 @@ void main() async {
       debugPrint('✅ AdMob initialized successfully');
     } catch (e) {
       debugPrint('⚠️ AdMob initialization warning: $e');
+    }
+
+    // Initialize Play Billing
+    try {
+      await SubscriptionService.initialize();
+      debugPrint('✅ Play Billing initialized successfully');
+    } catch (e) {
+      debugPrint('⚠️ Play Billing initialization warning: $e');
     }
   } else {
     debugPrint('ℹ️ Firebase & AdMob disabled on Web platform');

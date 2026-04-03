@@ -35,3 +35,4 @@ android/app/*.jks
 # Firebase configuration (use environment-specific configs instead)
 lib/firebase_options.dart
 
+android/release-key.jks

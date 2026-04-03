@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/subscription_service.dart';
 import 'package:intl/intl.dart';
 
@@ -134,37 +135,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 24),
           OutlinedButton(
             onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('サブスクリプションをキャンセル'),
-                  content: const Text(
-                    'プレミアムサブスクリプションをキャンセルしますか？ '
-                    'すべてのプレミアム機能へのアクセスが失われます。',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('プレミアムを維持'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('キャンセル'),
-                    ),
-                  ],
-                ),
+              // Google Play ではアプリ内でキャンセルできないため
+              // Play Store のサブスクリプション管理ページへ誘導
+              final uri = Uri.parse(
+                'https://play.google.com/store/account/subscriptions'
+                '?sku=premium_monthly'
+                '&package=com.receiptmaker.receipt',
               );
-
-              if (confirm == true) {
-                await SubscriptionService.cancelSubscription();
-                setState(() {
-                  _isPremium = false;
-                  _subscriptionDate = null;
-                });
-                if (mounted) {
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('サブスクリプションをキャンセルしました'),
+                      content: Text('Google Playのサブスクリプション管理ページを開けませんでした'),
                     ),
                   );
                 }
@@ -175,7 +159,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               side: BorderSide(color: Colors.red.shade300),
             ),
             child: Text(
-              'サブスクリプションをキャンセル',
+              'サブスクリプションを管理（Google Play）',
               style: TextStyle(color: Colors.red.shade700),
             ),
           ),
