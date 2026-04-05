@@ -413,7 +413,7 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
             ),
             const SizedBox(height: 24),
             DropdownButtonFormField<String>(
-              initialValue: _paymentMethod,
+              value: _paymentMethod,
               decoration: const InputDecoration(
                 labelText: '支払方法',
                 border: OutlineInputBorder(),

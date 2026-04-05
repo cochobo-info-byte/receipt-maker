@@ -36,3 +36,9 @@ android/app/*.jks
 lib/firebase_options.dart
 
 android/release-key.jks
+android/app/build.gradle.kts
+android/app/build.gradle.kts.bak
+android/build.gradle.kts
+android/settings.gradle.kts
+android/build.gradle.kts.bak2
+android/settings.gradle.kts.bak2
