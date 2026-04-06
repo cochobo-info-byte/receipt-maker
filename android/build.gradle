@@ -5,11 +5,7 @@ allprojects {
     }
 }
 
-def newBuildDir = rootProject.file("../../build")
-rootProject.buildDir = newBuildDir
-
 subprojects {
-    project.buildDir = new File(newBuildDir, project.name)
     project.evaluationDependsOn(":app")
 }
 
