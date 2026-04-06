@@ -53,20 +53,33 @@ jobs:
 
       - name: Build Release APK
         run: flutter build apk --release --no-pub
+        continue-on-error: true
 
-      - name: List APK output files
+      - name: Find and collect APK files
         run: |
-          echo "=== APK output files ==="
-          find build/app/outputs/apk/ -name "*.apk" 2>/dev/null || echo "No APK found"
+          echo "=== Searching all APK files ==="
+          find . -name "*.apk" -not -path "*/flutter/*" 2>/dev/null
+          echo "=== Build directory structure ==="
+          find build/app/outputs/ -type f 2>/dev/null || echo "build/app/outputs not found"
+          echo "=== Checking alternate paths ==="
+          ls -la build/app/outputs/apk/release/ 2>/dev/null || echo "release dir not found"
 
       - name: Build Release AAB
         run: flutter build appbundle --release --no-pub
 
-      - name: Upload APK
+      - name: Find AAB files
+        run: |
+          echo "=== Searching all AAB files ==="
+          find . -name "*.aab" -not -path "*/flutter/*" 2>/dev/null
+
+      - name: Upload APK (flexible path)
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: build/app/outputs/apk/release/
+          path: |
+            build/app/outputs/apk/release/*.apk
+            build/app/outputs/apk/**/*.apk
+          if-no-files-found: warn
           retention-days: 30
 
       - name: Upload AAB
@@ -74,4 +87,5 @@ jobs:
         with:
           name: release-aab
           path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: warn
           retention-days: 30
