@@ -63,8 +63,6 @@ jobs:
           find . -name "*.apk" 2>/dev/null
           echo "=== All AAB files ==="
           find . -name "*.aab" 2>/dev/null
-          echo "=== android/app/build/outputs ==="
-          find android/app/build/outputs/ -type f 2>/dev/null || echo "not found"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
