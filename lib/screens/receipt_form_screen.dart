@@ -791,10 +791,8 @@ class _ReceiptFormScreenState extends State<ReceiptFormScreen> {
         }
         
         // Show interstitial ad after saving (for free users)
-        if (widget.receipt == null) {
-          await AdService.showInterstitialAd();
-          await AnalyticsService.logInterstitialAdShown();
-        }
+        await AdService.showInterstitialAd();
+        await AnalyticsService.logInterstitialAdShown();
         
         Navigator.pop(context);
       }
